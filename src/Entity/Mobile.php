@@ -35,11 +35,6 @@ class Mobile
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $brand;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $model;
 
     /**
@@ -56,6 +51,12 @@ class Mobile
      * @ORM\Column(type="integer")
      */
     private $stockage;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Brand::class, inversedBy="mobile")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $brand;
 
     public function getId(): ?int
     {
@@ -97,19 +98,7 @@ class Mobile
 
         return $this;
     }
-
-    public function getBrand(): ?string
-    {
-        return $this->brand;
-    }
-
-    public function setBrand(string $brand): self
-    {
-        $this->brand = $brand;
-
-        return $this;
-    }
-
+    
     public function getModel(): ?string
     {
         return $this->model;
@@ -154,6 +143,18 @@ class Mobile
     public function setStockage(int $stockage): self
     {
         $this->stockage = $stockage;
+
+        return $this;
+    }
+
+    public function getBrand(): ?Brand
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?Brand $brand): self
+    {
+        $this->brand = $brand;
 
         return $this;
     }
