@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,29 +25,19 @@ class Client
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $email;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $password;
-
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $creation_date;
-
-    /**
      * @ORM\Column(type="integer")
      */
-    private $adress_liv;
+    private $token;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="client", orphanRemoval=true, cascade={"persist", "remove"})
      */
-    private $fact_id;
+    private $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -64,62 +56,44 @@ class Client
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getToken(): ?int
     {
-        return $this->email;
+        return $this->token;
     }
 
-    public function setEmail(string $email): self
+    public function setToken(int $token): self
     {
-        $this->email = $email;
+        $this->token = $token;
 
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
-        return $this->password;
+        return $this->users;
     }
 
-    public function setPassword(string $password): self
+    public function addUser(User $user): self
     {
-        $this->password = $password;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setClient($this);
+        }
 
         return $this;
     }
 
-    public function getCreationDate(): ?\DateTimeInterface
+    public function removeUser(User $user): self
     {
-        return $this->creation_date;
-    }
-
-    public function setCreationDate(\DateTimeInterface $creation_date): self
-    {
-        $this->creation_date = $creation_date;
-
-        return $this;
-    }
-
-    public function getAdressLiv(): ?int
-    {
-        return $this->adress_liv;
-    }
-
-    public function setAdressLiv(int $adress_liv): self
-    {
-        $this->adress_liv = $adress_liv;
-
-        return $this;
-    }
-
-    public function getFactId(): ?int
-    {
-        return $this->fact_id;
-    }
-
-    public function setFactId(int $fact_id): self
-    {
-        $this->fact_id = $fact_id;
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getClient() === $this) {
+                $user->setClient(null);
+            }
+        }
 
         return $this;
     }

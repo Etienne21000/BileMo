@@ -58,6 +58,11 @@ class Mobile
      */
     private $brand;
 
+    /**
+     * @ORM\Column(type="string", length=20)
+     */
+    private $state;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -155,6 +160,18 @@ class Mobile
     public function setBrand(?Brand $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
+    }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): self
+    {
+        $this->state = $state;
 
         return $this;
     }

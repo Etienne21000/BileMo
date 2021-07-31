@@ -31,6 +31,7 @@ class AppFixtures extends Fixture
             $color = $this->colors();
             $storage = $this->storage();
             $IMEI = $this->IMEI();
+            $state = $this->mobile_state();
 
             $mobile1 = (new Mobile())
                 ->setBrand($brand);
@@ -44,7 +45,11 @@ class AppFixtures extends Fixture
                 ->setColor($color)
                 ->setIMEI($IMEI)
                 ->setStockage($storage)
-                ->setDescription($brand_id.' '.$model . ' reconditionné état comme neuf.');
+                ->setState($state);
+
+            $state_descp = $this->state_description($mobile1->getState());
+
+            $mobile1->setDescription($brand_id.' '.$model . ' reconditionné '.$state_descp.'.');
             $manager->persist($mobile1);
             $price = $this->set_price($mobile1->getStockage());
             $mobile1->setPrice($price);
@@ -134,6 +139,39 @@ class AppFixtures extends Fixture
             return $this->models_get($models);
 
         }
+    }
+
+    public function mobile_state(){
+        $state = ['A+', 'A', 'B+', 'B', 'C+', 'C'];
+        shuffle($state);
+        foreach ($state as $value){
+            $resp = $value;
+        }
+        return $resp;
+    }
+
+    public function state_description($state){
+        switch ($state){
+            case 'A+':
+                $resp = 'état comme neuf';
+                break;
+            case 'A':
+                $resp = 'très bon état';
+                break;
+            case 'B+':
+                $resp = 'bon état';
+                break;
+            case 'B':
+                $resp = 'avec micro rayures non visibles à 10cm';
+                break;
+            case 'C+':
+                $resp = 'en état moyen avec des rayures visibles à 20cm ';
+                break;
+            case 'C':
+                $resp = 'en mauvais état estétique, mais en parfait état de fonctionnement';
+                break;
+        }
+        return $resp;
     }
 
     public function models_get(array $models) {
