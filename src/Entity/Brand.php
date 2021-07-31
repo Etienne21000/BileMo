@@ -25,7 +25,7 @@ class Brand
     private $brand_name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Mobile::class, mappedBy="brand", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Mobile::class, mappedBy="brand", cascade={"persist", "remove"})
      */
     private $mobile;
 
