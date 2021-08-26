@@ -2,13 +2,18 @@
 
 namespace App\Entity;
 
+//use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\MobileRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
  * @ORM\Entity(repositoryClass=MobileRepository::class)
+ * @ApiResource(
+ *  normalizationContext={"groups"={"mobile_read", "invoice_read"}}
+ * )
  */
 class Mobile
 {
@@ -16,41 +21,49 @@ class Mobile
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $IMEI;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $stockage;
 
@@ -62,6 +75,7 @@ class Mobile
 
     /**
      * @ORM\Column(type="string", length=20)
+     * @Groups({"mobile_read", "invoice_read"})
      */
     private $state;
 
