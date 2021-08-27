@@ -6,11 +6,83 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Mobile;
 use App\Entity\Brand;
+use App\Entity\User;
+use App\Entity\Client;
+use App\Entity\Address;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
     public function load(ObjectManager $manager)
     {
+
+        $user_1 = (new User())
+            ->setUsername('BileMo')
+            ->setCreationDate(new \DateTime())
+            ->setEmail('bilemo@mail.com')
+            ->setRoles(['ROLE_ADMIN']);
+        $manager->persist($user_1);
+        $user_1->setPassword($this->passwordHasher->hashPassword(
+            $user_1,
+            'Equinox75!'
+        ));
+
+        $user_2 = (new User())
+            ->setUsername('MobileDetect')
+            ->setCreationDate(new \DateTime())
+            ->setEmail('mobiledetect@mail.com')
+            ->setRoles(['ROLE_ADMIN']);
+        $manager->persist($user_2);
+        $user_2->setPassword($this->passwordHasher->hashPassword(
+            $user_2,
+            'Equinox75!'
+        ));
+
+        $address_user = (new Address())
+            ->setAddress('12 rue du Louvre')
+            ->setCp('75002')
+            ->setCity('Paris')
+            ->setType(1);
+        $manager->persist($address_user);
+
+        $user_1->addAddress($address_user);
+        $manager->persist($user_1);
+
+        $address_client = (new Address())
+            ->setAddress('1 place du Carrousel')
+            ->setCp('75002')
+            ->setType(1)
+            ->setCity('Paris');
+        $manager->persist($address_client);
+
+        $address_client_2 = (new Address())
+            ->setAddress('2 rue Monge')
+            ->setCp('21000')
+            ->setType(1)
+            ->setCity('Dijon');
+        $manager->persist($address_client_2);
+
+        $user_2->addAddress($address_client);
+        $manager->persist($user_2);
+
+//        for ($i = 0; $i < 20; $i++) {
+
+            $client_1 = (new Client())
+                ->setName('Patrick Dupont')
+                ->setEmail('p.dupont@mail.com')
+                ->setCreationDate(new \DateTime())
+                ->setUser($user_2)
+                ->setAddress($address_client_2);
+            $manager->persist($client_1);
+//        }
+
         $apple = (new Brand())->setBrandName('Apple');
         $manager->persist($apple);
         $samsung = (new Brand())->setBrandName('Samsung');
@@ -46,6 +118,7 @@ class AppFixtures extends Fixture
                 ->setIMEI($IMEI)
                 ->setStockage($storage)
                 ->setState($state);
+//                ->setCreationDate(new \DateTime(date('Y-m-d')));
 
             $state_descp = $this->state_description($mobile1->getState());
 
