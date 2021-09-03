@@ -1,0 +1,15 @@
+html{
+    height: 100%;
+}
+body {
+    height: 100%;
+    display: flex;
+}
+
+form{
+    width: 50%;
+    margin: auto;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: rgb(149 157 165 / 20%) 0 8px 24px;
+}

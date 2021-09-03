@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Repository\BrandRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +13,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=BrandRepository::class)
- * @ApiResource
+ * @ApiResource(
+ *     itemOperations={
+ *          "get"={
+ *              "openapi_context"={
+ *                  "summary"="hidden",
+ *              },
+ *              "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
+ *              "access_control_message"="Vous devez vous connecter pour accéder à cette section",
+ *          },
+ *     },
+ * )
  */
 class Brand
 {
