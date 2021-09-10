@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\TokenService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,44 +11,23 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login")
-     * @param AuthenticationUtils $authenticationUtils
-     * @return Response
-     */
-    public function login(AuthenticationUtils $authenticationUtils): Response
-    {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        if ($this->getUser()) {
-            return $this->redirectToRoute('_target_path');
-        }
-
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
-    }
-
-    /**
      * @Route("/api/login", name="api_login", methods={"POST"})
-     * @param Response $request
      * @return Response
      */
-    public function apiLogin(Response $request): Response
+    public function apiLogin()
     {
         $user = $this->getUser();
+//        $token = new TokenService($user->getUserIdentifier(), $user->getPassword());
+//        $token->createTokenFromUserAuthentication();
         return $this->json([
            'username' => $user->getUserIdentifier(),
             'role' => $user->getRoles(),
+//            'token' => $token,
         ]);
     }
 
     /**
-     * @Route("/logout", name="app_logout")
+     * @Route("/api/logout", name="api_logout", methods={"POST"})
      */
     public function logout(): void
     {

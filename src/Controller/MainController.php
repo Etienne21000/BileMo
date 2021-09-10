@@ -2,13 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\TokenService;
 
 class MainController extends AbstractController
 {
+    private $em;
+
     /**
      * @Route("/", name="home")
      */
@@ -30,9 +35,12 @@ class MainController extends AbstractController
             $resp = $color;
         }
 
+        $token = new TokenService();
+        $headers = ['Authorization'];
+        $resp_token = $token->createTokenFromUserAuthentication($username = 'bilemo@mail.com', $user_id = 1);
         return $this->render('base.html.twig', [
-//            'php' => $php,
             'color' => $resp,
+            'token' => $resp_token,
         ]);
     }
 

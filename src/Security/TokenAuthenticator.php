@@ -3,42 +3,45 @@
 
 namespace App\Security;
 
+use Symfony\Config\LexikJwtAuthentication;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Lcobucci\JWT\Signer\Key\InMemory;
+//use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
+use Symfony\Component\Validator\Constraints\Time;
+use App\Service\TokenService;
+use function Doctrine\Common\Cache\Psr6\expiresAt;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
-
     private $em;
+    private $token;
 
-    public  function __construct(EntityManagerInterface $em)
+//    public const LOGIN_ROUTE = 'api_login';
+
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+//        $this->token = $token;
     }
 
     /**
-     * @inheritDoc
-     */
-    public function start(Request $request, AuthenticationException $authException = null): Response
-    {
-        $data = [
-            // you might translate this message
-            'message' => 'Authentication Required'
-        ];
-
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
-    }
-
-    /**
-     * @inheritDoc
+     * @param Request $request
+     * @return bool
      */
     public function supports(Request $request): bool
     {
@@ -46,58 +49,98 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     }
 
     /**
-     * @inheritDoc
+     * @param Request $request
+     * @return string|null
      */
     public function getCredentials(Request $request)
     {
         return $request->headers->get('X-AUTH-TOKEN');
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
+
+//        $jwt = $credentials;
         if (null === $credentials) {
+            // The token header was empty, authentication fails with HTTP Status
+            // Code 401 "Unauthorized"
             return null;
         }
+
+        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+
+        if (!$user) {
+            // fail authentication with a custom error
+            throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnue');
+        } else {
+
+            $token = new TokenService();
+            $token->createTokenFromUserAuthentication($user->getUserIdentifier(), $user->getId());
+
+        }
         return $userProvider->loadUserByIdentifier($credentials);
+
+
+        // The user identifier in this case is the apiToken, see the key `property`
+        // of `your_db_provider` in `security.yaml`.
+        // If this returns a user, checkCredentials() is called next:
+//        return $userProvider->loadUserByIdentifier($credentials);
+//        var_dump($token);
+//        exit();
     }
 
-    /**
-     * @inheritDoc
-     */
     public function checkCredentials($credentials, UserInterface $user): bool
     {
+        // Check credentials - e.g. make sure the password is valid.
+        // In case of an API token, no credential check is needed.
+
+        // Return `true` to cause authentication success
         return true;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey): ?Response
+    {
+        // on success, let the request continue
+        return null;
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
-
+            // you may want to customize or obfuscate the message first
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
+            'message_erreur' => 'Attention l\'identifiant ou le mot de passe est incorrect'
+            // or to translate this message
+            // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
     /**
-     * @inheritDoc
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return Response
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        return null;
+        $data = [
+            'message' => 'Attention vous devez etre connecte'
+        ];
+
+        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function supportsRememberMe(): bool
+    {
+        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function supportsRememberMe(): bool
+    public function authenticate(Request $request): PassportInterface
     {
-        return false;
+        // TODO: Implement authenticate() method.
     }
 }

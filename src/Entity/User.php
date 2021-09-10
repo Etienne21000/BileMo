@@ -12,7 +12,22 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ApiResource(attributes={"security"="is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')"},)
+ * @ApiResource(
+ *     attributes={
+ *     "security"="is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')"
+ *      },
+ *     collectionOperations={
+ *          "users"={
+ *              "path"="/users",
+ *              "method"="get",
+ *              "openapi_context"={
+ *                   "security"={{
+ *                      "bearerAuth"={}}
+ *                  }
+ *              }
+ *          }
+ *     }
+ * )
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
