@@ -3,6 +3,7 @@
 
 namespace App\Security;
 
+use Lcobucci\JWT\Token\UnsupportedHeaderFound;
 use Symfony\Config\LexikJwtAuthentication;
 use App\Entity\User;
 use DateTimeImmutable;
@@ -45,7 +46,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return $request->headers->has('X-AUTH-TOKEN');
+        return $request->headers->has('Authorization')
+            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ');
     }
 
     /**
@@ -54,17 +56,20 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        return $request->headers->get('X-AUTH-TOKEN');
+        $authorizationHeader = $request->headers->get('Authorization');
+        // skip beyond "Bearer "
+        return substr($authorizationHeader, 7);
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
 
 //        $jwt = $credentials;
-        if (null === $credentials) {
+        if ($credentials === null) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
-            return null;
+            throw new UnsupportedHeaderFound('Le header ne fonctionne pas');
+            //return null;
         }
 
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
@@ -75,25 +80,20 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         } else {
 
             $token = new TokenService();
-            $token->createTokenFromUserAuthentication($user->getUserIdentifier(), $user->getId());
+            $token->createTokenFromUserAuthentication($user->getUserIdentifier());
 
         }
-        return $userProvider->loadUserByIdentifier($credentials);
-
-
-        // The user identifier in this case is the apiToken, see the key `property`
-        // of `your_db_provider` in `security.yaml`.
-        // If this returns a user, checkCredentials() is called next:
-//        return $userProvider->loadUserByIdentifier($credentials);
-//        var_dump($token);
-//        exit();
+//        return $token;
+        return new JsonResponse(['token' => $token]);
+//        return $userProvider->loadUserByIdentifier($credentials['username']);
+        //dump($credentials);die;
     }
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
         // Check credentials - e.g. make sure the password is valid.
         // In case of an API token, no credential check is needed.
-
+        //dd($credentials);
         // Return `true` to cause authentication success
         return true;
     }

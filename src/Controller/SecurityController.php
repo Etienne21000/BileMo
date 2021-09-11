@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\TokenService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -17,12 +18,26 @@ class SecurityController extends AbstractController
     public function apiLogin()
     {
         $user = $this->getUser();
-//        $token = new TokenService($user->getUserIdentifier(), $user->getPassword());
-//        $token->createTokenFromUserAuthentication();
+//        $token = new TokenService();
+//        $token->createTokenFromUserAuthentication($user->getUserIdentifier());
+//        return $this->json([
+//           'username' => $user->getUserIdentifier(),
+//            'role' => $user->getRoles(),
+////            'token' => $token,
+//
+////            'token' => new JsonResponse(['token' => $token]),
+//        ]);
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->json([
+                'error' => 'Attention une erreur s\'est produite'
+            ], 400);
+        }
         return $this->json([
            'username' => $user->getUserIdentifier(),
             'role' => $user->getRoles(),
+            'user_id' => $user->getId(),
 //            'token' => $token,
+
         ]);
     }
 

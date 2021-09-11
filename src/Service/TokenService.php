@@ -20,7 +20,7 @@ class TokenService
 //        $this->user_id = $user_id;
 //    }
 
-    public function createTokenFromUserAuthentication($username, $user_id) {
+    public function createTokenFromUserAuthentication($username) {
 //        $username = $this->user;
 //        $user_id = $this->user_id;
         //json_encode($user);
@@ -32,15 +32,15 @@ class TokenService
         $now = new DateTimeImmutable();
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::base64Encoded('testing'));
         $jwt = $config->builder()
-            ->issuedBy('https://localhost:8000/api/users')
-            ->withHeader('iss', 'https://localhost:8000/api/users')
-            ->permittedFor('https://localhost:8000/api/users')
-            ->identifiedBy($user_id)
-            ->relatedTo($username)
+            ->issuedBy('https://'.$_SERVER['HTTP_HOST'].'/api')
+            ->withHeader('iss', 'https://'.$_SERVER['HTTP_HOST'].'/api')
+            ->permittedFor('https://'.$_SERVER['HTTP_HOST'].'/api')
+            ->identifiedBy($username)
+//            ->relatedTo($username)
             ->issuedAt($now)
-            ->canOnlyBeUsedAfter($now->modify('+1 minute'))
+            ->canOnlyBeUsedAfter($now)
             ->expiresAt($now->modify('+1 hour'))
-            ->withClaim('uid', $user_id)
+            ->withClaim('api', 'BileMo')
             ->getToken($config->signer(), $config->signingKey());
 
         return $jwt->toString();
