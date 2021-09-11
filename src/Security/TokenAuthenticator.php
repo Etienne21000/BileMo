@@ -46,8 +46,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return $request->headers->has('Authorization')
-            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ');
+        return $request->headers->has('Authorization: Bearer');
+//            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ');
     }
 
     /**
@@ -80,7 +80,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         } else {
 
             $token = new TokenService();
-            $token->createTokenFromUserAuthentication($user->getUserIdentifier());
+            $token->createTokenFromUserAuthentication($user->getUserIdentifier(), $user->getId());
 
         }
 //        return $token;

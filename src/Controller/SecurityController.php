@@ -18,8 +18,8 @@ class SecurityController extends AbstractController
     public function apiLogin()
     {
         $user = $this->getUser();
-//        $token = new TokenService();
-//        $token->createTokenFromUserAuthentication($user->getUserIdentifier());
+        $token = new TokenService();
+        $token->createTokenFromUserAuthentication($user->getUserIdentifier(), $user->getId());
 //        return $this->json([
 //           'username' => $user->getUserIdentifier(),
 //            'role' => $user->getRoles(),
@@ -36,7 +36,7 @@ class SecurityController extends AbstractController
            'username' => $user->getUserIdentifier(),
             'role' => $user->getRoles(),
             'user_id' => $user->getId(),
-//            'token' => $token,
+            'token' => $token,
 
         ]);
     }

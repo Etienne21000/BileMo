@@ -37,7 +37,7 @@ class MainController extends AbstractController
 
         $token = new TokenService();
 //        $headers = ['Authorization: Bearer'];
-        $resp_token = $token->createTokenFromUserAuthentication($username = 'bilemo@mail.com');
+        $resp_token = $token->createTokenFromUserAuthentication($username = 'bilemo@mail.com', $user_id = 1);
         return $this->render('base.html.twig', [
             'color' => $resp,
             'token' => $resp_token,
