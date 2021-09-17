@@ -13,20 +13,20 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
- *     attributes={
- *     "security"="is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')"
+ *      attributes={
+ *          "security"="is_granted('ROLE_USER')",
+ *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
  *      },
- *     collectionOperations={
- *          "users"={
- *              "path"="/users",
- *              "method"="get",
- *              "openapi_context"={
- *                   "security"={{
- *                      "bearerAuth"={}}
- *                  }
- *              }
- *          }
- *     }
+ *      collectionOperations={
+ *         "get"={"security"="is_granted('ROLE_USER')", "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"},
+ *         "post"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
+ *     },
+ *      itemOperations={
+ *          "get"={"security"="is_granted('ROLE_SUPERADMIN')", "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"},
+ *      }
  * )
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -127,7 +127,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        if (empty($roles)) {
+            $roles[] = 'ROLE_USER';
+        }
 
         return array_unique($roles);
     }

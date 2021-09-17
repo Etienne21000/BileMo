@@ -19,26 +19,27 @@ class SecurityController extends AbstractController
     {
         $user = $this->getUser();
         $token = new TokenService();
-        $token->createTokenFromUserAuthentication($user->getUserIdentifier(), $user->getId());
-//        return $this->json([
-//           'username' => $user->getUserIdentifier(),
-//            'role' => $user->getRoles(),
-////            'token' => $token,
-//
-////            'token' => new JsonResponse(['token' => $token]),
-//        ]);
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->json([
-                'error' => 'Attention une erreur s\'est produite'
-            ], 400);
-        }
-        return $this->json([
-           'username' => $user->getUserIdentifier(),
-            'role' => $user->getRoles(),
-            'user_id' => $user->getId(),
-            'token' => $token,
+        $jwt = $token->createTokenFromUserAuthentication($user->getUserIdentifier());
 
-        ]);
+            if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+                return $this->json([
+                    'error' => 'Attention une erreur s\'est produite'
+                ], 400);
+            }
+
+            if (!$user) {
+                return $this->json([
+                    'error' => 'Attention aucun utilisateur',
+                ], 400);
+            }
+
+//            dd('Bearer '.$jwt);
+            return $this->json([
+//                'username' => $user->getUserIdentifier(),
+//                'role' => $user->getRoles(),
+//                'user_id' => $user->getId(),
+                'token' => 'Bearer '.$jwt,
+            ]);
     }
 
     /**

@@ -30,14 +30,10 @@ use function Doctrine\Common\Cache\Psr6\expiresAt;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     private $em;
-    private $token;
-
-//    public const LOGIN_ROUTE = 'api_login';
 
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-//        $this->token = $token;
     }
 
     /**
@@ -46,8 +42,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return $request->headers->has('Authorization: Bearer');
-//            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ');
+        return $request->headers->has('Authorization')
+            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ');
     }
 
     /**
@@ -56,15 +52,15 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
+
         $authorizationHeader = $request->headers->get('Authorization');
-        // skip beyond "Bearer "
+
         return substr($authorizationHeader, 7);
+
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-
-//        $jwt = $credentials;
         if ($credentials === null) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
@@ -72,21 +68,21 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             //return null;
         }
 
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+//        dd($credentials);
 
+        $token = new TokenService();
+        $jwt = $token->decryptToken($credentials);
+
+//        dd($jwt);
+
+        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $jwt]);
+
+//        dd($user);
         if (!$user) {
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnue');
-        } else {
-
-            $token = new TokenService();
-            $token->createTokenFromUserAuthentication($user->getUserIdentifier(), $user->getId());
-
         }
-//        return $token;
-        return new JsonResponse(['token' => $token]);
-//        return $userProvider->loadUserByIdentifier($credentials['username']);
-        //dump($credentials);die;
+        return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user): bool
@@ -134,13 +130,5 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function supportsRememberMe(): bool
     {
         return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function authenticate(Request $request): PassportInterface
-    {
-        // TODO: Implement authenticate() method.
     }
 }

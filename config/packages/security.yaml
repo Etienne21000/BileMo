@@ -16,14 +16,16 @@ security:
         login:
             pattern: ^/api/login
             stateless: true
+            provider: app_user_provider
             json_login:
                 check_path: api_login
             guard:
                 authenticators:
                     - App\Security\TokenAuthenticator
         api:
-            pattern: ^/api
+            pattern: ^/api/
             stateless: true
+            provider: app_user_provider
 #            json_login:
 #                check_path: api_login
             guard:
@@ -50,9 +52,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: '^/api/login', roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: '^/api', roles: ROLE_USER }
-#        - { path: '^/', roles: ROLE_USER }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/, roles: ROLE_USER }
+        - { path: ^/api/users, roles: ROLE_SUPERADMIN }
+    role_hierarchy:
+            ROLE_USER: ROLE_USER
+            ROLE_ADMIN: [ROLE_ADMIN, ROLE_USER]
+            ROLE_SUPERADMIN: [ROLE_ADMIN, ROLE_USER, ROLE_SUPERADMIN]
     password_hashers:
         # use your user class name here
         App\Entity\User:

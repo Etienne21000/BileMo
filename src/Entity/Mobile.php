@@ -26,7 +26,31 @@ use App\Entity\Brand;
  *     "pagination_items_per_page"=10,
  *     "pagination_client_items_per_page"=true,
  *     "pagination_maximum_items_per_page"=50,
+ *     "security"="is_granted('ROLE_USER')",
+ *     "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
  *     },
+ *     collectionOperations={
+ *          "get"={},
+ *          "post"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
+ *     },
+ *     itemOperations={
+ *         "get"={},
+ *         "put"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "patch"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "delete"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
+ *      },
  * )
  * @ApiFilter(SearchFilter::class, properties={
  *     "title": "partial",

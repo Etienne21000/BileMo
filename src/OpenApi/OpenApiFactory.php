@@ -26,9 +26,9 @@ class OpenApiFactory implements OpenApiFactoryInterface
     {
         $OpenApi = $this->decoration->__invoke($context);
 
-        foreach ($OpenApi->getPaths()->getPaths() as $path){
-//            dd($path->getGet()->getSummary());
-        }
+//        foreach ($OpenApi->getPaths()->getPaths() as $path){
+////            dd($path->getGet()->getSummary());
+//        }
 //        dd($OpenApi);
         $scheme = $OpenApi->getComponents()->getSecuritySchemes();
         $scheme['bearerAuth'] = new \ArrayObject([
