@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Entity\Client;
 use App\Entity\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Faker;
 
 class AppFixtures extends Fixture
 {
@@ -23,11 +24,13 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
 
+        $faker = Faker\Factory::create('fr_FR');
+
         $user_1 = (new User())
             ->setUsername('BileMo')
             ->setCreationDate(new \DateTime())
             ->setEmail('bilemo@mail.com')
-            ->setRoles(['ROLE_ADMIN']);
+            ->setRoles(['ROLE_SUPERADMIN']);
         $manager->persist($user_1);
         $user_1->setPassword($this->passwordHasher->hashPassword(
             $user_1,
@@ -45,17 +48,48 @@ class AppFixtures extends Fixture
             'Equinox75!'
         ));
 
-        $address_user = (new Address())
-            ->setAddress('12 rue du Louvre')
-            ->setCp('75002')
-            ->setCity('Paris')
-            ->setType(1);
-        $manager->persist($address_user);
+        for ($i = 0; $i < 60; $i++) {
 
-        $user_1->addAddress($address_user);
-        $manager->persist($user_1);
+            $client_1 = (new Client())
+                ->setName($faker->lastName);
+            $manager->persist($client_1);
+            $client_1
+                ->setEmail($client_1->getName().'@mail.com')
+                ->setCreationDate(new \DateTime())
+                ->setUser($user_2);
+            $manager->persist($client_1);
 
-        $address_client = (new Address())
+        }
+
+        for ($i = 0; $i < 60; $i++) {
+
+            $address_user = (new Address())
+                ->setAddress($faker->address)
+                ->setCp('75002')
+                ->setCity($faker->city)
+                ->setType(1);
+            $manager->persist($address_user);
+            $address = [$address_user];
+
+            foreach ($address as $add) {
+                $user_1->addAddress($add);
+                $user_2->addAddress($add);
+                $client_1->addAddress($add);
+                $manager->persist($user_1);
+                $manager->persist($user_2);
+                $manager->persist($client_1);
+            }
+        }
+
+
+
+
+
+
+
+
+
+        /*$address_client = (new Address())
             ->setAddress('1 place du Carrousel')
             ->setCp('75002')
             ->setType(1)
@@ -70,18 +104,9 @@ class AppFixtures extends Fixture
         $manager->persist($address_client_2);
 
         $user_2->addAddress($address_client);
-        $manager->persist($user_2);
+        $manager->persist($user_2);*/
 
-//        for ($i = 0; $i < 20; $i++) {
 
-            $client_1 = (new Client())
-                ->setName('Patrick Dupont')
-                ->setEmail('p.dupont@mail.com')
-                ->setCreationDate(new \DateTime())
-                ->setUser($user_2)
-                ->setAddress($address_client_2);
-            $manager->persist($client_1);
-//        }
 
         $apple = (new Brand())->setBrandName('Apple');
         $manager->persist($apple);

@@ -12,7 +12,33 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=AddressRepository::class)
  * @ApiResource(
  *     normalizationContext={"groups"={"address:read"}},
- *     denormalizationContext={"groups"={"address:write"}}
+ *     denormalizationContext={"groups"={"address:write"}},
+ *     attributes={
+ *          "security"="is_granted('ROLE_USER')",
+ *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *     },
+ *     collectionOperations={
+ *          "get"={},
+ *          "post"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
+ *     },
+ *     itemOperations={
+ *         "get"={},
+ *         "put"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "patch"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "delete"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
+ *      },
  * )
  */
 class Address
@@ -42,7 +68,7 @@ class Address
     private $address;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=11)
      * @Groups({"address:read", "address:write"})
      * @Groups({"client:read", "client:write"})
      * @Assert\NotBlank(message="Attention ce champ ne doit pas être vide")

@@ -24,8 +24,20 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
  *          },
  *     },
- *      itemOperations={
+ *     itemOperations={
  *          "get"={"security"="is_granted('ROLE_SUPERADMIN')", "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"},
+ *          "put"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
+ *          "patch"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          }
  *      }
  * )
  */

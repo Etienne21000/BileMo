@@ -3,6 +3,7 @@
 
 namespace App\Security;
 
+use DateTime;
 use Lcobucci\JWT\Token\UnsupportedHeaderFound;
 use Symfony\Config\LexikJwtAuthentication;
 use App\Entity\User;
@@ -65,19 +66,25 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
             throw new UnsupportedHeaderFound('Le header ne fonctionne pas');
-            //return null;
         }
-
-//        dd($credentials);
 
         $token = new TokenService();
         $jwt = $token->decryptToken($credentials);
 
-//        dd($jwt);
+        $user_email = $jwt->get('jti');
+        $expire_token = $jwt->get('exp');
+//        dd($jwt->get('exp'));
+//        $dateTimeZone = new \DateTimeZone('Europe/Paris');
+        $now = new DateTimeImmutable();
+        $resp_time = $now->modify('+2 hours');
+        $resp_time->format('Y-m-d H:i:s');
+        $calc = $resp_time > $expire_token;
 
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $jwt]);
-
-//        dd($user);
+        if($calc) {
+            dd('Attention la periode de validité du token a expiré');
+        } else {
+            $user = $this->em->getRepository(User::class)->findOneBy(['email' => $user_email]);
+        }
         if (!$user) {
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnue');

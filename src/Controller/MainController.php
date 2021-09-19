@@ -38,9 +38,11 @@ class MainController extends AbstractController
         $token = new TokenService();
 //        $headers = ['Authorization: Bearer'];
         $resp_token = $token->createTokenFromUserAuthentication($username = 'mobiledetect@mail.com');
+        $time_token = $token->decryptToken($resp_token);
+        $resp_time = $time_token->get('exp');
         return $this->render('base.html.twig', [
             'color' => $resp,
-            'token' => $resp_token,
+            'token' => $resp_time,
         ]);
     }
 

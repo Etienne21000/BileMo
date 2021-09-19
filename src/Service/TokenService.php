@@ -7,35 +7,26 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Validation\ConstraintViolation;
+//use Lcobucci\JWT\Validation\ConstraintViolation;
 //use Lcobucci\JWT\UnencryptedToken;
-use Lcobucci\JWT\ValidationData;
+//use Lcobucci\JWT\ValidationData;
 
 class TokenService
 {
-    private $user;
-    private $user_id;
-
-//    public function __construct($user, $user_id)
-//    {
-//        $this->user = $user;
-//        $this->user_id = $user_id;
-//    }
-
     public function createTokenFromUserAuthentication($username) {
 
         $now = new DateTimeImmutable();
+        $actual_time = $now->modify('+2 hours');
+
         $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::base64Encoded('BileMoApiRestPrivateKey'));
         $jwt = $config->builder()
             ->issuedBy('https://'.$_SERVER['HTTP_HOST'].'/api')
             ->withHeader('iss', 'https://'.$_SERVER['HTTP_HOST'].'/api')
             ->permittedFor('https://'.$_SERVER['HTTP_HOST'].'/api')
             ->identifiedBy($username)
-//            ->relatedTo($user_id)
-            ->issuedAt($now)
-            ->canOnlyBeUsedAfter($now)
-            ->expiresAt($now->modify('+1 hour'))
-//            ->withClaim('uid', $user_id)
+            ->issuedAt($actual_time)
+            ->canOnlyBeUsedAfter($actual_time)
+            ->expiresAt($actual_time->modify('+1 hour'))
             ->getToken($config->signer(), $config->signingKey());
 
         return $jwt->toString();
@@ -45,8 +36,8 @@ class TokenService
         $token = str_replace('Bearer ', '', $credentials);
         $parser = new Parser();
         $jwt = $parser->parse($token);
-//        dd($jwt->claims()->get('jti'));
-        return $jwt->claims()->get('jti');
+
+        return $jwt->claims();
     }
 
 }
