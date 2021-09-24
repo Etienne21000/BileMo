@@ -23,21 +23,19 @@ use App\Entity\Brand;
  *     },
  *     normalizationContext={"groups"={"mobile:read"}},
  *     attributes={
- *     "pagination_items_per_page"=10,
- *     "pagination_client_items_per_page"=true,
- *     "pagination_maximum_items_per_page"=50,
- *     "security"="is_granted('ROLE_USER')",
- *     "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *          "pagination_items_per_page"=10,
+ *          "pagination_client_items_per_page"=true,
+ *          "pagination_maximum_items_per_page"=50,
  *     },
  *     collectionOperations={
- *          "get"={},
+ *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
  *          "post"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
  *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
  *         }
  *     },
  *     itemOperations={
- *         "get"={},
+ *         "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
  *         "put"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
  *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"

@@ -14,11 +14,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
  *      attributes={
- *          "security"="is_granted('ROLE_USER')",
+ *          "security"="is_granted('ROLE_SUPERADMIN')",
  *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
  *      },
  *      collectionOperations={
- *         "get"={"security"="is_granted('ROLE_USER')", "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"},
+ *         "get"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
  *         "post"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
  *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"

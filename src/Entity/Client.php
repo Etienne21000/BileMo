@@ -19,10 +19,36 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     denormalizationContext={"groups"={"client:write"}},
  *     normalizationContext={"groups"={"client:read"}},
  *     attributes={
- *     "pagination_items_per_page"=10,
- *     "pagination_client_items_per_page"=true,
- *     "pagination_maximum_items_per_page"=50,
+ *          "pagination_items_per_page"=10,
+ *          "pagination_client_items_per_page"=true,
+ *          "pagination_maximum_items_per_page"=50,
  *     },
+ *     collectionOperations={
+ *          "get"={"security"="is_granted('ROLE_ADMIN')",
+ *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
+ *          "post"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
+ *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('ROLE_ADMIN')",
+ *         "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
+ *         "put"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "patch"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "delete"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
+ *      },
  * )
  * @ApiFilter(SearchFilter::class, properties={
  *     "id": "exact",
@@ -59,28 +85,22 @@ class Client
      */
     private $creationDate;
 
-    /*/**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="clients")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"client:read"})
-     */
-    /*
-    private $user;*/
-
-    /**
-     * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
-     * @Groups({"client:read"})
-     */
-    private $Address;
-
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="client")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"client:read", "client:write"})
      */
     private $user;
 
     /**
+     * @ORM\OneToOne(targetEntity=Address::class, inversedBy="client", cascade={"persist", "remove"})
+     * @Groups({"client:read", "client:write"})
+     */
+    private $Address;
+
+    /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="client")
+     * @Groups({"client:read", "client:write"})
      */
     private $addresses;
 
@@ -130,18 +150,6 @@ class Client
 
         return $this;
     }
-
-    /*public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }*/
 
     public function getAddress(): ?Address
     {

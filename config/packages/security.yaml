@@ -26,23 +26,9 @@ security:
             pattern: ^/api/
             stateless: true
             provider: app_user_provider
-#            json_login:
-#                check_path: api_login
             guard:
                 authenticators:
                     - App\Security\TokenAuthenticator
-#        main:
-#            lazy: true
-#            provider: app_user_provider
-#            json_login:
-#                check_path: api_login
-#            guard:
-#                authenticators:
-#                    - App\Security\TokenAuthenticator
-#            logout:
-#                path: api_logout
-                # where to redirect after logout
-                # target: app_any_route
         # activate different ways to authenticate
         # https://symfony.com/doc/current/security.html#firewalls-authentication
 
@@ -54,8 +40,8 @@ security:
     access_control:
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/, roles: ROLE_USER }
-        - { path: ^/api/users, roles: ROLE_SUPERADMIN }
+#        - { path: ^/api/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+#        - { path: ^/api/users, roles: ROLE_SUPERADMIN }
     role_hierarchy:
             ROLE_USER: ROLE_USER
             ROLE_ADMIN: [ROLE_ADMIN, ROLE_USER]

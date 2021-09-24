@@ -48,7 +48,6 @@ class Address
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({"address:read"})
-     * @Groups({"client:read"})
      */
     private $id;
 
@@ -62,7 +61,6 @@ class Address
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"address:read", "address:write"})
-     * @Groups({"client:read", "client:write"})
      * @Assert\NotBlank(message="Attention ce champ ne doit pas être vide")
      */
     private $address;
@@ -70,7 +68,6 @@ class Address
     /**
      * @ORM\Column(type="string", length=11)
      * @Groups({"address:read", "address:write"})
-     * @Groups({"client:read", "client:write"})
      * @Assert\NotBlank(message="Attention ce champ ne doit pas être vide")
      */
     private $cp;
@@ -78,7 +75,6 @@ class Address
     /**
      * @ORM\Column(type="integer")
      * @Groups({"address:read", "address:write"})
-     * @Groups({"client:read", "client:write"})
      * @Assert\NotBlank(message="Attention ce champ ne doit pas être vide")
      */
     private $type;
@@ -91,18 +87,19 @@ class Address
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"client:read", "client:write"})
      * @Groups({"address:read", "address:write"})
      */
     private $city;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="address")
+     * @Groups({"address:read", "address:write"})
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="addresses")
+     * @Groups({"address:read", "address:write"})
      */
     private $client;
 

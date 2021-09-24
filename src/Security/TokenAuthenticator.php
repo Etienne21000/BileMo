@@ -63,9 +63,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $calc = $token->validateTimeToken($expire_token);
 
         if(!$calc) {
-            return $this->json->json([
-                'error' => 'Attention, la periode de validité du token a expiré',
-            ], 400);
+            dd('Attention, la periode de validité du token a expiré');
         } else {
             $user = $this->em->getRepository(User::class)->findOneBy(['email' => $user_email]);
         }
@@ -103,7 +101,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $data = [
-            'message' => 'Attention vous devez être connecté'
+            'message' => 'Attention vous devez etre connecte'
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
