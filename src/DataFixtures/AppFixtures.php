@@ -30,6 +30,7 @@ class AppFixtures extends Fixture
             ->setUsername('BileMo')
             ->setCreationDate(new \DateTime())
             ->setEmail('bilemo@mail.com')
+            ->setCreationDate(new \DateTimeImmutable())
             ->setRoles(['ROLE_SUPERADMIN']);
         $manager->persist($user_1);
         $user_1->setPassword($this->passwordHasher->hashPassword(
@@ -41,6 +42,7 @@ class AppFixtures extends Fixture
             ->setUsername('MobileDetect')
             ->setCreationDate(new \DateTime())
             ->setEmail('mobiledetect@mail.com')
+            ->setCreationDate(new \DateTimeImmutable())
             ->setRoles(['ROLE_ADMIN']);
         $manager->persist($user_2);
         $user_2->setPassword($this->passwordHasher->hashPassword(
@@ -55,7 +57,7 @@ class AppFixtures extends Fixture
             $manager->persist($client_1);
             $client_1
                 ->setEmail($client_1->getName().'@mail.com')
-                ->setCreationDate(new \DateTime())
+                ->setCreationDate(new \DateTimeImmutable())
                 ->setUser($user_2);
             $manager->persist($client_1);
 
@@ -80,33 +82,6 @@ class AppFixtures extends Fixture
                 $manager->persist($client_1);
             }
         }
-
-
-
-
-
-
-
-
-
-        /*$address_client = (new Address())
-            ->setAddress('1 place du Carrousel')
-            ->setCp('75002')
-            ->setType(1)
-            ->setCity('Paris');
-        $manager->persist($address_client);
-
-        $address_client_2 = (new Address())
-            ->setAddress('2 rue Monge')
-            ->setCp('21000')
-            ->setType(1)
-            ->setCity('Dijon');
-        $manager->persist($address_client_2);
-
-        $user_2->addAddress($address_client);
-        $manager->persist($user_2);*/
-
-
 
         $apple = (new Brand())->setBrandName('Apple');
         $manager->persist($apple);
@@ -142,9 +117,8 @@ class AppFixtures extends Fixture
                 ->setColor($color)
                 ->setIMEI($IMEI)
                 ->setStockage($storage)
+                ->setCreatedAt(new \DateTimeImmutable())
                 ->setState($state);
-//                ->setCreationDate(new \DateTime(date('Y-m-d')));
-
             $state_descp = $this->state_description($mobile1->getState());
 
             $mobile1->setDescription($brand_id.' '.$model . ' reconditionné '.$state_descp.'.');

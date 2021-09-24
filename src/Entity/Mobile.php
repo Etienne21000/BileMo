@@ -137,6 +137,18 @@ class Mobile
      */
     private $state;
 
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"mobile:read", "mobile:write"})
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mobile:read", "mobile:write"})
+     */
+    private $modifiedAt;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -246,6 +258,30 @@ class Mobile
     public function setState(string $state): self
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getModifiedAt(): ?\DateTimeInterface
+    {
+        return $this->modifiedAt;
+    }
+
+    public function setModifiedAt(?\DateTimeInterface $modifiedAt): self
+    {
+        $this->modifiedAt = $modifiedAt;
 
         return $this;
     }

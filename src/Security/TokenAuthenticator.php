@@ -3,15 +3,9 @@
 
 namespace App\Security;
 
-use DateTime;
 use Lcobucci\JWT\Token\UnsupportedHeaderFound;
-use Symfony\Config\LexikJwtAuthentication;
 use App\Entity\User;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,16 +15,12 @@ use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationExc
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Lcobucci\JWT\Signer\Key\InMemory;
-//use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
-use Symfony\Component\Validator\Constraints\Time;
 use App\Service\TokenService;
-use function Doctrine\Common\Cache\Psr6\expiresAt;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     private $em;
+    private $json;
 
     public function __construct(EntityManagerInterface $em)
     {
@@ -63,30 +53,23 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         if ($credentials === null) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
             throw new UnsupportedHeaderFound('Le header ne fonctionne pas');
         }
 
         $token = new TokenService();
         $jwt = $token->decryptToken($credentials);
-
         $user_email = $jwt->get('jti');
         $expire_token = $jwt->get('exp');
-//        dd($jwt->get('exp'));
-//        $dateTimeZone = new \DateTimeZone('Europe/Paris');
-        $now = new DateTimeImmutable();
-        $resp_time = $now->modify('+2 hours');
-        $resp_time->format('Y-m-d H:i:s');
-        $calc = $resp_time > $expire_token;
+        $calc = $token->validateTimeToken($expire_token);
 
-        if($calc) {
-            dd('Attention la periode de validité du token a expiré');
+        if(!$calc) {
+            return $this->json->json([
+                'error' => 'Attention, la periode de validité du token a expiré',
+            ], 400);
         } else {
             $user = $this->em->getRepository(User::class)->findOneBy(['email' => $user_email]);
         }
         if (!$user) {
-            // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnue');
         }
         return $user;
@@ -94,27 +77,19 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
-        // Check credentials - e.g. make sure the password is valid.
-        // In case of an API token, no credential check is needed.
-        //dd($credentials);
-        // Return `true` to cause authentication success
         return true;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey): ?Response
     {
-        // on success, let the request continue
         return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
-            // you may want to customize or obfuscate the message first
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
             'message_erreur' => 'Attention l\'identifiant ou le mot de passe est incorrect'
-            // or to translate this message
-            // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
@@ -128,7 +103,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $data = [
-            'message' => 'Attention vous devez etre connecte'
+            'message' => 'Attention vous devez être connecté'
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
