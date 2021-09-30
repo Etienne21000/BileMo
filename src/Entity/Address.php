@@ -14,18 +14,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"address:read"}},
  *     denormalizationContext={"groups"={"address:write"}},
  *     attributes={
- *          "security"="is_granted('ROLE_USER')",
- *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *          "pagination_client_items_per_page"=false,
  *     },
  *     collectionOperations={
- *          "get"={},
+ *          "get"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
  *          "post"={
  *              "security"="is_granted('ROLE_ADMIN')",
  *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
  *         }
  *     },
  *     itemOperations={
- *         "get"={},
+ *         "get"={
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          },
  *         "put"={
  *              "security"="is_granted('ROLE_ADMIN')",
  *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
@@ -51,13 +56,6 @@ class Address
      */
     private $id;
 
-    /*/**
-     * @ORM\Column(type="date")
-     * @Groups({"address:read", "address:write"})
-     * @Assert\NotBlank(message="Attention ce champ ne doit pas être vide")
-     */
-//    private $creationDate;
-
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"address:read", "address:write"})
@@ -79,12 +77,6 @@ class Address
      */
     private $type;
 
-    /*/**
-     * @ORM\OneToOne(targetEntity=User::class, mappedBy="address", cascade={"persist", "remove"})
-     */
-    /*
-    private $user;*/
-
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"address:read", "address:write"})
@@ -92,7 +84,7 @@ class Address
     private $city;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="address")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses")
      * @Groups({"address:read", "address:write"})
      */
     private $user;
@@ -107,18 +99,6 @@ class Address
     {
         return $this->id;
     }
-
-    /*public function getCreationDate(): ?\DateTimeInterface
-    {
-        return $this->creationDate;
-    }
-
-    public function setCreationDate(\DateTimeInterface $creationDate): self
-    {
-        $this->creationDate = $creationDate;
-
-        return $this;
-    }*/
 
     public function getAddress(): ?string
     {
@@ -155,11 +135,6 @@ class Address
 
         return $this;
     }
-
-    /*public function getUser(): ?User
-    {
-        return $this->user;
-    }*/
 
     public function getCity(): ?string
     {

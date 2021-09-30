@@ -14,13 +14,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=BrandRepository::class)
  * @ApiResource(
+ *     denormalizationContext={
+ *          "groups"={"brand:write"},
+ *     },
+ *     normalizationContext={"groups"={"brand:read"}},
+ *     attributes={
+ *          "pagination_client_items_per_page"=false,
+ *     },
  *     itemOperations={
  *          "get"={
  *              "openapi_context"={
  *                  "summary"="hidden",
  *              },
- *              "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')",
- *              "access_control_message"="Vous devez vous connecter pour accéder à cette section",
  *          },
  *     },
  * )
@@ -31,18 +36,19 @@ class Brand
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mobile:read"})
+     * @Groups({"brand:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mobile:read"})
+     * @Groups({"brand:read", "brand:write"})
      */
     private $brand_name;
 
     /**
      * @ORM\OneToMany(targetEntity=Mobile::class, mappedBy="brand", cascade={"persist", "remove"})
+     * @Groups({"brand:read", "brand:write"})
      */
     private $mobile;
 

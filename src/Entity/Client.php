@@ -19,9 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     denormalizationContext={"groups"={"client:write"}},
  *     normalizationContext={"groups"={"client:read"}},
  *     attributes={
- *          "pagination_items_per_page"=10,
- *          "pagination_client_items_per_page"=true,
- *          "pagination_maximum_items_per_page"=50,
+ *          "pagination_client_items_per_page"=false,
  *     },
  *     collectionOperations={
  *          "get"={"security"="is_granted('ROLE_ADMIN')",
@@ -55,6 +53,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "name": "partial",
  *     "address.city": "partial",
  *     "email": "partial",
+ *     "user.id": "exact",
  * })
  */
 class Client
@@ -93,13 +92,7 @@ class Client
     private $user;
 
     /**
-     * @ORM\OneToOne(targetEntity=Address::class, inversedBy="client", cascade={"persist", "remove"})
-     * @Groups({"client:read", "client:write"})
-     */
-    private $Address;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="client")
+     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="client", cascade={"persist", "remove"})
      * @Groups({"client:read", "client:write"})
      */
     private $addresses;
@@ -151,18 +144,6 @@ class Client
         return $this;
     }
 
-    public function getAddress(): ?Address
-    {
-        return $this->Address;
-    }
-
-    public function setAddress(?Address $Address): self
-    {
-        $this->Address = $Address;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -204,5 +185,4 @@ class Client
 
         return $this;
     }
-
 }

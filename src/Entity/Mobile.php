@@ -23,9 +23,7 @@ use App\Entity\Brand;
  *     },
  *     normalizationContext={"groups"={"mobile:read"}},
  *     attributes={
- *          "pagination_items_per_page"=10,
- *          "pagination_client_items_per_page"=true,
- *          "pagination_maximum_items_per_page"=50,
+ *          "pagination_client_items_per_page"=false,
  *     },
  *     collectionOperations={
  *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},

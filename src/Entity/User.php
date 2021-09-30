@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -9,13 +11,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource(
+ *     normalizationContext={"groups"={"user:read"}},
+ *     denormalizationContext={"groups"={"user:write"}},
  *      attributes={
- *          "security"="is_granted('ROLE_SUPERADMIN')",
- *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          "pagination_client_items_per_page"=false,
  *      },
  *      collectionOperations={
  *         "get"={
@@ -43,6 +47,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *          }
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "username": "partial",
+ * })
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -50,16 +57,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"user:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"user:read", "user:write"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"user:read", "user:write"})
      */
     private $roles = [];
 
@@ -71,28 +81,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"user:read", "user:write"})
      */
     private $creationDate;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"user:read", "user:write"})
      */
     private $username;
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="user")
+     * @Groups({"user:read", "user:write"})
      */
-    private $address;
+    private $addresses;
 
     /**
      * @ORM\OneToMany(targetEntity=Client::class, mappedBy="user")
+     * @Groups({"user:read", "user:write"})
      */
     private $client;
 
     public function __construct()
     {
-        $this->address = new ArrayCollection();
         $this->client = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -204,22 +218,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
-
         return $this;
     }
 
     /**
      * @return Collection|Address[]
      */
-    public function getAddress(): Collection
+    public function getAddresses(): Collection
     {
-        return $this->address;
+        return $this->addresses;
     }
 
     public function addAddress(Address $address): self
     {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
+        if (!$this->addresses->contains($address)) {
+            $this->addresses[] = $address;
             $address->setUser($this);
         }
 
@@ -228,7 +241,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeAddress(Address $address): self
     {
-        if ($this->address->removeElement($address)) {
+        if ($this->addresses->removeElement($address)) {
             // set the owning side to null (unless already changed)
             if ($address->getUser() === $this) {
                 $address->setUser(null);

@@ -14,7 +14,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserController
+class UserController extends AbstractController
 {
 
 }
