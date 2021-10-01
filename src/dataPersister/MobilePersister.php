@@ -42,22 +42,7 @@ class MobilePersister implements DataPersisterInterface
      * @inheritDoc
      */
     public function persist($data)
-    {/*
-        if($context['post']) {
-
-        }
-
-        if($context['put']) {
-
-            $data->setModifiedAt(new \DateTimeImmutable());
-        }*/
-
-        /*if(Request::METHOD_POST ) {
-            $data->setCreatedAt(new \DateTimeImmutable());
-        }
-        if(Request::METHOD_PUT || Request::METHOD_PATCH) {
-            $data->setModifiedAt(new \DateTimeImmutable());
-        }*/
+    {
         $data->setCreatedAt(new \DateTimeImmutable());
 
         $this->em->persist($data);

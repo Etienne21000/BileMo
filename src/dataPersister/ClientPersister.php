@@ -6,12 +6,14 @@ use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\DataPersisterHelper;
+//use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ClientPersister implements DataPersisterInterface
 {
 
     private $em;
     private $helper;
+    //private $token;
 
     /**
      * ClientPersister constructor.

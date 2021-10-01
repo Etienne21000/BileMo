@@ -19,7 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     denormalizationContext={"groups"={"client:write"}},
  *     normalizationContext={"groups"={"client:read"}},
  *     attributes={
- *          "pagination_client_items_per_page"=false,
+ *          "pagination_client_items_per_page"=true,
+ *          "pagination_items_per_page"=20
  *     },
  *     collectionOperations={
  *          "get"={"security"="is_granted('ROLE_ADMIN')",
@@ -80,7 +81,7 @@ class Client
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"client:read", "client:write"})
+     * @Groups({"client:read"})
      */
     private $creationDate;
 

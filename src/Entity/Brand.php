@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\BrandRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -21,14 +21,33 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     attributes={
  *          "pagination_client_items_per_page"=false,
  *     },
- *     itemOperations={
- *          "get"={
- *              "openapi_context"={
- *                  "summary"="hidden",
- *              },
- *          },
+ *     collectionOperations={
+ *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
+ *          "post"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
  *     },
+ *     itemOperations={
+ *         "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
+ *         "put"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "patch"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         },
+ *         "delete"={
+ *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         }
+ *      },
  * )
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "brand_name": "partial",
+ *     "id": "exact",
+ * })
  */
 class Brand
 {

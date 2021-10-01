@@ -6,7 +6,7 @@ use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use App\Entity\Address;
 use Doctrine\ORM\EntityManagerInterface;
 
-class AddressPersiter implements DataPersisterInterface
+class AddressPersister implements DataPersisterInterface
 {
     /**
      * @var EntityManagerInterface
@@ -15,7 +15,7 @@ class AddressPersiter implements DataPersisterInterface
 //    private $Address;
 
     /**
-     * AddressPersiter constructor.
+     * AddressPersister constructor.
      * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)

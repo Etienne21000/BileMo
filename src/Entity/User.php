@@ -32,9 +32,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          },
  *     },
  *     itemOperations={
- *          "get"={"security"="is_granted('ROLE_SUPERADMIN')", "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"},
+ *          "get"={
+ *              "security"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"},
  *          "put"={
- *              "security"="is_granted('ROLE_SUPERADMIN')",
+ *              "security"="is_granted('IS_AUTHENTICATED_FULLY')",
  *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
  *          },
  *          "patch"={
@@ -76,6 +78,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Groups({"user:write"})
+
      */
     private $password;
 

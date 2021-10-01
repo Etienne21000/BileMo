@@ -28,5 +28,7 @@ services:
 
     App\dataPersister\MobilePersister: ~
     App\dataPersister\UserPersister: ~
+    App\dataPersister\ClientPersister: ~
+    App\dataPersister\AddressPersister: ~
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
