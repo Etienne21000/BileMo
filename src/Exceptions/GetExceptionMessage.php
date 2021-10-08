@@ -16,7 +16,7 @@
 namespace App\Exceptions;
 
 
-class GetExceptionMessage
+class GetExceptionMessage extends \Exception
 {
 
 }

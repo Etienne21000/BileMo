@@ -2,12 +2,9 @@
 
 namespace App\dataPersister;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use App\Entity\Mobile;
-use App\Entity\Brand;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 
 class MobilePersister implements DataPersisterInterface
@@ -17,7 +14,6 @@ class MobilePersister implements DataPersisterInterface
      * @var EntityManagerInterface
      */
     private $em;
-//    private $decorated;
 
     /**
      * MobilePersister constructor.
@@ -26,7 +22,6 @@ class MobilePersister implements DataPersisterInterface
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-//        $this->decorated = $decorated;
     }
 
     /**
@@ -35,7 +30,6 @@ class MobilePersister implements DataPersisterInterface
     public function supports($data): Bool
     {
         return $data instanceof Mobile;
-//        return $this->decorated->supports($data, $context);
     }
 
     /**
@@ -44,11 +38,8 @@ class MobilePersister implements DataPersisterInterface
     public function persist($data)
     {
         $data->setCreatedAt(new \DateTimeImmutable());
-
         $this->em->persist($data);
         $this->em->flush();
-//        return $this->decorated->persist($data, $context);
-
     }
 
     /**
@@ -58,6 +49,5 @@ class MobilePersister implements DataPersisterInterface
     {
         $this->em->remove($data);
         $this->em->flush();
-//        return $this->decorated->remove($data, $context);
     }
 }

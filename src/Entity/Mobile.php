@@ -67,6 +67,7 @@ class Mobile
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({"mobile:read"})
+     * @Assert\IsNull(message="Attention, cet identifiant n'existe pas")
      */
     private $id;
 

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Mobile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\MobileRepository;
@@ -38,6 +39,16 @@ class MobileController extends AbstractController
             'controller_name' => 'MobileController',
         ]);
     }
+
+    /*public function getOneMobile(int $id){
+        try{
+            $mobile = $this->mobile_manager->findOneBy(['id' => $id]);
+            return $mobile;
+        } catch (\Exception $e){
+            throw new BadRequestException('Attention ce mobile n\'hexiste pas');
+
+        }
+    }*/
 
 //    /**
 //     * @param Mobile $data

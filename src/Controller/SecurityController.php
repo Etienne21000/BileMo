@@ -33,11 +33,7 @@ class SecurityController extends AbstractController
                 ], 400);
             }
 
-//            dd('Bearer '.$jwt);
             return $this->json([
-//                'username' => $user->getUserIdentifier(),
-//                'role' => $user->getRoles(),
-//                'user_id' => $user->getId(),
                 'token' => 'Bearer '.$jwt,
             ]);
     }

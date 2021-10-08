@@ -1,3 +1,8 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+#users_get_infos:
+#    path: "/users/{id}"
+#    methods: ['GET']
+#    defaults:
+#      _controller: App\QueryCollectionExtension\UserOwnerGetExtension::filterByCurrentUser

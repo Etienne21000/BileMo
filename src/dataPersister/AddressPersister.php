@@ -12,7 +12,6 @@ class AddressPersister implements DataPersisterInterface
      * @var EntityManagerInterface
      */
     protected $em;
-//    private $Address;
 
     /**
      * AddressPersister constructor.
@@ -21,7 +20,6 @@ class AddressPersister implements DataPersisterInterface
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-//        $this->Address = new Address();
     }
 
     /**
@@ -37,7 +35,6 @@ class AddressPersister implements DataPersisterInterface
      */
     public function persist($data)
     {
-//        $data->setCreationDate(new \DateTime("Y-m-d"));
         $this->em->persist($data);
         $this->em->flush();
     }

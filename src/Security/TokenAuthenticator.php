@@ -43,7 +43,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-
         $authorizationHeader = $request->headers->get('Authorization');
 
         return substr($authorizationHeader, 7);
@@ -54,23 +53,29 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         if ($credentials === null) {
             throw new UnsupportedHeaderFound('Le header ne fonctionne pas');
-        }
-
-        $token = new TokenService();
-        $jwt = $token->decryptToken($credentials);
-        $user_email = $jwt->get('jti');
-        $expire_token = $jwt->get('exp');
-        $calc = $token->validateTimeToken($expire_token);
-
-        if(!$calc) {
-            dd('Attention, la periode de validité du token a expiré');
         } else {
-            $user = $this->em->getRepository(User::class)->findOneBy(['email' => $user_email]);
+            try {
+                $token = new TokenService();
+                $jwt = $token->decryptToken($credentials);
+                $user_email = $jwt->get('jti');
+                $expire_token = $jwt->get('exp');
+                $calc = $token->validateTimeToken($expire_token);
+                $user = $this->em->getRepository(User::class)->findOneBy(['email' => $user_email]);
+                if (!$calc) {
+                    new CustomUserMessageAuthenticationException('Attention, la periode de validité du token a expiré');
+                } else {
+                    if (!$user) {
+                        throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnue');
+                    } else {
+                        return $user;
+                    }
+                }
+                return $user;
+            } catch (\Exception $e) {
+                new CustomUserMessageAuthenticationException($e->getMessage());
+
+            }
         }
-        if (!$user) {
-            throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnue');
-        }
-        return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user): bool
