@@ -6,6 +6,7 @@ namespace App\Security;
 use Lcobucci\JWT\Token\UnsupportedHeaderFound;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,6 @@ use App\Service\TokenService;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     private $em;
-    private $json;
 
     public function __construct(EntityManagerInterface $em)
     {
@@ -46,13 +46,17 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $authorizationHeader = $request->headers->get('Authorization');
 
         return substr($authorizationHeader, 7);
-
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserProviderInterface $userProvider
+     * @return User|object|UserInterface|null
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         if ($credentials === null) {
-            throw new UnsupportedHeaderFound('Le header ne fonctionne pas');
+            throw new CustomUserMessageAuthenticationException('Le header ne fonctionne pas');
         } else {
             try {
                 $token = new TokenService();
@@ -62,18 +66,17 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 $calc = $token->validateTimeToken($expire_token);
                 $user = $this->em->getRepository(User::class)->findOneBy(['email' => $user_email]);
                 if (!$calc) {
-                    new CustomUserMessageAuthenticationException('Attention, la periode de validité du token a expiré');
+                    throw new CustomUserMessageAuthenticationException('Attention, la periode de validité du token a expiré');
                 } else {
                     if (!$user) {
-                        throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnue');
+                        throw new CustomUserMessageAuthenticationException('Attention, cet utilisateur est inconnu');
                     } else {
                         return $user;
                     }
                 }
                 return $user;
             } catch (\Exception $e) {
-                new CustomUserMessageAuthenticationException($e->getMessage());
-
+                throw new CustomUserMessageAuthenticationException($e->getMessage());
             }
         }
     }
@@ -92,7 +95,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
-            'message_erreur' => 'Attention l\'identifiant ou le mot de passe est incorrect'
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
@@ -106,7 +108,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $data = [
-            'message' => 'Attention vous devez etre connecte'
+            'message' => 'Attention, vous devez être connecte'
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);

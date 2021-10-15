@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 
 class ExceptionEventListener implements EventSubscriberInterface
@@ -25,7 +26,7 @@ class ExceptionEventListener implements EventSubscriberInterface
     {
         $exception_response = $event->getThrowable();
         $msg = $exception_response->getMessage();
-
+//        $code = $exception_response->getCode();
         if($exception_response){
             $response = new JsonResponse(
                 $msg,
