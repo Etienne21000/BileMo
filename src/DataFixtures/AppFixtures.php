@@ -225,7 +225,7 @@ class AppFixtures extends Fixture
     public function state_description($state){
         switch ($state){
             case 'A+':
-                $resp = 'état comme neuf';
+                $resp = 'comme neuf';
                 break;
             case 'A':
                 $resp = 'très bon état';

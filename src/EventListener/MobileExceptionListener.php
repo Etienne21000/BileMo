@@ -16,10 +16,12 @@
 namespace App\EventListener;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Entity\Client;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Mobile;
 
 
 class MobileExceptionListener implements EventSubscriberInterface
@@ -41,13 +43,14 @@ class MobileExceptionListener implements EventSubscriberInterface
 
         if (strpos($getPath, '/api/mobiles/') === false || !$event->getRequest()->isMethodSafe(false)) {
             return;
+        } else {
+            $msg = 'Attention, cette fiche mobile n\'existe pas';
+            $response = new JsonResponse(
+                $msg,
+                '404'
+            );
         }
 
-        $msg = 'Attention, cette fiche mobile n\'existe pas';
-        $response = new JsonResponse(
-            $msg,
-            '404'
-        );
         $response->headers->set('Content-Type', 'application/ld+json');
         $event->setResponse($response);
     }

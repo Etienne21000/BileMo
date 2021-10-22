@@ -3,12 +3,15 @@
 namespace App\EventListener;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Core\Exception\InvalidArgumentException;
+use ApiPlatform\Core\Validator\Exception\ValidationException;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
-
 
 class ExceptionEventListener implements EventSubscriberInterface
 {
@@ -26,14 +29,42 @@ class ExceptionEventListener implements EventSubscriberInterface
     {
         $exception_response = $event->getThrowable();
         $msg = $exception_response->getMessage();
-//        $code = $exception_response->getCode();
-        if($exception_response){
+
+        if($exception_response instanceof ValidationException) {
+            $response = new JsonResponse(
+                $msg,
+                '400'
+            );
+        } elseif($exception_response instanceof InvalidArgumentException) {
+            $trace = $exception_response->getTrace();
+            $entityTypeWrong = $trace[0]['args'][0];
+            $response = new JsonResponse(
+                'Attention, la valeur du champ '.$entityTypeWrong.' n\'est pas la bonne',
+                '400'
+            );
+        } elseif($exception_response instanceof BadRequestException){
             $response = new JsonResponse(
                 $msg,
                 '404'
             );
-            $response->headers->set('Content-Type', 'application/ld+json');
-            $event->setResponse($response);
+        } elseif($exception_response instanceof HttpExceptionInterface) {
+            $response = new JsonResponse(
+                $msg,
+                '403'
+            );
+        } elseif($exception_response instanceof NotFoundHttpException) {
+            $response = new JsonResponse(
+                'La page demandée n\'éxiste pas',
+                '404'
+            );
+        } else {
+            $response = new JsonResponse(
+              'Une erreur s\'est produite',
+              '500'
+            );
         }
+
+        $response->headers->set('Content-Type', 'application/ld+json');
+        $event->setResponse($response);
     }
 }

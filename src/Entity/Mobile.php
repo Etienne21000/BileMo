@@ -74,7 +74,7 @@ class Mobile
     /**
      * @ORM\Column(type="string", length=100)
      * @Groups({"mobile:read", "mobile:write"})
-     * @Assert\NotBlank(message="Attention le titre est obligatoire")
+     * @Assert\Type(type="string", message="Attention le format est invalide")
      */
     private $title;
 
@@ -82,20 +82,27 @@ class Mobile
      * @ORM\Column(type="integer")
      * @Groups({"mobile:read", "mobile:write"})
      * @Assert\NotBlank(message="Attention l'IMEI est obligatoire")
+     * @Assert\Type(type="integer", message="Attention l'IMEI doit être un nombre")
+     * @Assert\Length(
+     *     min=8,
+     *     max=10,
+     *     minMessage="Attention, l'IMEI doit être composé d'au moins 8 caractères",
+     *     maxMessage="Attention, l'IMEI ne peut être composé que de 10 caractères maximum"
+     * )
      */
     private $IMEI;
 
     /**
      * @ORM\Column(type="text")
      * @Groups({"mobile:read", "mobile:write"}))
-     * @Assert\NotBlank(message="Attention la description est obligatoire")
+     * @Assert\Type(type="string", message="Attention le format est invalide")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"mobile:read", "mobile:write"})
-     * @Assert\NotBlank(message="Attention le model est obligatoire")
+     * @Assert\NotBlank(message="Attention vous devez ajouter un modèle")
      */
     private $model;
 
