@@ -18,18 +18,14 @@ class ExceptionEventListener implements EventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::EXCEPTION => ['getExceptionMessage', EventPriorities::POST_READ],
-        ];
+    public static function getSubscribedEvents() {
+        return [KernelEvents::EXCEPTION => ['getExceptionMessage', EventPriorities::POST_READ],];
     }
 
     public function getExceptionMessage(ExceptionEvent $event): void
     {
         $exception_response = $event->getThrowable();
         $msg = $exception_response->getMessage();
-
         if($exception_response instanceof ValidationException) {
             $response = new JsonResponse(
                 $msg,
@@ -63,7 +59,6 @@ class ExceptionEventListener implements EventSubscriberInterface
               '500'
             );
         }
-
         $response->headers->set('Content-Type', 'application/ld+json');
         $event->setResponse($response);
     }
