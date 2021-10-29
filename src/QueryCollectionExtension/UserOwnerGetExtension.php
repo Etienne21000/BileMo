@@ -7,10 +7,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Client;
 use App\Entity\User;
-use App\Entity\Mobile;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -52,13 +50,10 @@ class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryI
      * @param $resourceClass
      */
     private function filterByCurrentUser($queryBuilder, $resourceClass){
-
         $rootAlias = $queryBuilder->getRootAliases()[0];
         preg_match('/[0-9]+/', $_SERVER['REQUEST_URI'], $matches);
-
         $req = Request::createFromGlobals();
         $method = $req->getMethod();
-
         switch ($resourceClass){
             case User::class:
                 $userId = $this->getTokenAuthentication();
@@ -68,16 +63,11 @@ class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryI
                         $queryBuilder->setParameter('current_user', $userId);
                     } elseif($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
                         return;
-                    }
-                    else {
-                        throw new BadRequestException('Attention vous avez uniquement accès aux données user vous concernant ');
-                    }
+                    } else { throw new BadRequestException('Attention vous avez uniquement accès aux données user vous concernant ');}
                 } else {
                     if($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']){
                         return;
-                    } else {
-                        throw new BadRequestException('Attention, vous n\'avez pas accès à ces ressources');
-                    }
+                    } else { throw new BadRequestException('Attention, vous n\'avez pas accès à ces ressources');}
                 }
                 break;
             case Client::class:
@@ -93,27 +83,18 @@ class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryI
                             $resp = $queryBuilder->getQuery()->getResult();
                             if (!$resp) {
                                 throw new BadRequestException('Attention, vous n\'avez accès qu\'à votre liste de clients ');
-                            } else {
-                                return;
-                            }
+                            } else { return;}
                         } elseif ($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
                             return;
-                        } else {
-                            throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');
-                        }
-                    } elseif (!$client) {
-                        throw new BadRequestException('Attention, ce client n\'existe pas');
-                    }
+                        } else { throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');}
+                    } elseif (!$client) { throw new BadRequestException('Attention, ce client n\'existe pas');}
                 } else {
                     if($userId && $this->currentUser->getRoles() == ['ROLE_ADMIN']) {
                         $queryBuilder->andWhere(sprintf('%s.user = :current_user', $rootAlias));
                         $queryBuilder->setParameter('current_user', $userId);
                     } elseif($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
                         return;
-                    }
-                    else {
-                        throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');
-                    }
+                    } else {throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');}
                 }
                 break;
             default:
