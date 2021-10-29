@@ -16,7 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     denormalizationContext={
  *     "groups"={"mobile:write"},
- *     "openapi_definition_name"="Bonjour",
  *     },
  *     normalizationContext={"groups"={"mobile:read"}},
  *     attributes={
@@ -24,26 +23,35 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "pagination_items_per_page"=15
  *     },
  *     collectionOperations={
- *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
+ *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *                  "openapi_context"={
+ *                      "summary"="Get all mobiles",
+ *                      "description"="Get all mobiles available",
+ *                   },
+ *          },
  *          "post"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
- *         }
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
+ *          },
  *     },
  *     itemOperations={
- *         "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
+ *         "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *              "openapi_context"={
+ *                      "summary"="Get one mobile",
+ *                      "description"="Get one mobile from BileMo mobile list",
+ *               },
+ *         },
  *         "put"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
- *         },
- *         "patch"={
- *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
  *         },
  *         "delete"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
- *         }
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
+ *         },
  *      },
  * )
  * @ApiFilter(SearchFilter::class, properties={
@@ -64,7 +72,6 @@ class Mobile
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({"mobile:read"})
-     * @Assert\IsNull(message="Attention, cet identifiant n'existe pas")
      */
     private $id;
 

@@ -5,10 +5,7 @@ namespace App\OpenApi;
 
 
 use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
-use ApiPlatform\Core\OpenApi\Model\Operation;
-use ApiPlatform\Core\OpenApi\Model\PathItem;
 use ApiPlatform\Core\OpenApi\OpenApi;
-use phpDocumentor\Reflection\Types\Array_;
 
 class OpenApiFactory implements OpenApiFactoryInterface
 {
@@ -25,11 +22,26 @@ class OpenApiFactory implements OpenApiFactoryInterface
     public function __invoke(array $context = []): OpenApi
     {
         $OpenApi = $this->decoration->__invoke($context);
-
-//        foreach ($OpenApi->getPaths()->getPaths() as $path){
-////            dd($path->getGet()->getSummary());
-//        }
-//        dd($OpenApi);
+        foreach ($OpenApi->getPaths()->getPaths() as $key => $path) {
+            if ($path->getGet() && $path->getGet()->getSummary() === 'hidden') {
+                $OpenApi->getPaths()->addPath($key, $path->withGet(null));
+            }
+        }
+        foreach ($OpenApi->getPaths()->getPaths() as $key => $path) {
+            if ($path->getPost() && $path->getPost()->getSummary() === 'hidden') {
+                $OpenApi->getPaths()->addPath($key, $path->withPost(null));
+            }
+        }
+        foreach ($OpenApi->getPaths()->getPaths() as $key => $path) {
+            if ($path->getPut() && $path->getPut()->getSummary() === 'hidden') {
+                $OpenApi->getPaths()->addPath($key, $path->withPut(null));
+            }
+        }
+        foreach ($OpenApi->getPaths()->getPaths() as $key => $path) {
+            if ($path->getDelete() && $path->getDelete()->getSummary() === 'hidden') {
+                $OpenApi->getPaths()->addPath($key, $path->withDelete(null));
+            }
+        }
         $scheme = $OpenApi->getComponents()->getSecuritySchemes();
         $scheme['bearerAuth'] = new \ArrayObject([
             'type' => 'http',

@@ -19,29 +19,58 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *          "get"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                      "summary"="Get all addresses listed in BileMo",
+ *                      "description"="Get all addresses available for users and clients",
+ *                   },
  *          },
  *          "post"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                  "summary"="Add a new client to your own client list",
+ *                  "requestBody"={
+ *                      "content"={
+ *                          "application/ld+json"={
+ *                              "schema"={
+ *                                  "properties"={
+ *                                      "address"={"type"="string", "example"="1 rue Jean Moulin"},
+ *                                      "cp"={"type"="integer", "example"="92120"},
+ *                                      "type"={"type"="integer", "example"="0"},
+ *                                      "city"={"type"="string", "example"="Bourg-la-Reine"},
+ *                                  }
+ *                              }
+ *                          }
+ *                      }
+ *                  }
+ *              }
  *         }
  *     },
  *     itemOperations={
  *         "get"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                      "summary"="Get one address",
+ *                      "description"="Get one address from BileMo list",
+ *                   },
  *          },
  *         "put"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
- *         },
- *         "patch"={
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                      "summary"="Update one address",
+ *                      "description"="Update one address from BileMo list",
+ *              },
  *         },
  *         "delete"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                      "summary"="Delete one address",
+ *                      "description"="Delete one address from BileMo list",
+ *              },
  *         }
  *      },
  * )

@@ -9,7 +9,6 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -25,24 +24,42 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={
  *         "get"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
  *          },
  *         "post"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
  *          },
  *     },
  *     itemOperations={
- *          "get"={
- *              "security"="is_granted('IS_AUTHENTICATED_FULLY')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"},
+ *          "get"={"security"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                  "summary"="Get your own user account informations",
+ *                  "description"="Here you can find all informations about your own user account registered on BileMo Rest Api",
+ *              }
+ *          },
  *          "put"={
  *              "security"="is_granted('IS_AUTHENTICATED_FULLY')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
- *          },
- *          "patch"={
- *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                  "summary"="Update your own user account informations",
+ *                  "description"="Here you can Update your informations from your own user account registered on BileMo Rest Api",
+ *                  "requestBody"={
+ *                      "content"={
+ *                          "application/ld+json"={
+ *                              "schema"={
+ *                                  "properties"={
+ *                                      "email"={"type"="string", "example"="nom.prenom@mail.com"},
+ *                                      "password"={"type"="string", "example"="myPassword"},
+ *                                  }
+ *                              }
+ *                          }
+ *                      }
+ *                  }
+ *              }
  *          },
  *          "delete"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",

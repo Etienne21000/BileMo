@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Security;
 
-use Lcobucci\JWT\Token\UnsupportedHeaderFound;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -96,7 +93,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
-
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 

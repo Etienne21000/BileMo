@@ -7,11 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
@@ -24,28 +22,54 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     collectionOperations={
  *          "get"={"security"="is_granted('ROLE_ADMIN')",
- *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *          "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                  "summary"="Get all clients related to your user account",
+ *                  "description"="Here you can find all the clients related to your own account, no access to other user client's list is possible",
+ *              }
  *          },
  *          "post"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                  "summary"="Add a new client to your own client list",
+ *                  "requestBody"={
+ *                      "content"={
+ *                          "application/ld+json"={
+ *                              "schema"={
+ *                                  "properties"={
+ *                                      "email"={"type"="string", "example"="nom.prenom@mail.com"}
+ *                                  }
+ *                              }
+ *                          }
+ *                      }
+ *                  }
+ *              }
  *         }
  *     },
  *     itemOperations={
  *         "get"={"security"="is_granted('ROLE_ADMIN')",
- *         "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *         "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *         "openapi_context"={
+ *                  "summary"="Get one client related to your user account",
+ *                  "description"="Here you can find one client related to your own account, no access to other user client's is possible",
+ *              },
  *          },
  *         "put"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
- *         },
- *         "patch"={
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                  "summary"="Update one client file related to your user account",
+ *                  "description"="Here you can update one client related to your own account, no access to other user client's is possible",
+ *              },
  *         },
  *         "delete"={
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={
+ *                  "summary"="Delete a client file related to your user account",
+ *                  "description"="Here you can delete a client related to your own account, no delete action is possible on other user client's list",
+ *              }
  *         }
  *      },
  * )

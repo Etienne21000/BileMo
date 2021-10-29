@@ -22,25 +22,34 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "pagination_client_items_per_page"=false,
  *     },
  *     collectionOperations={
- *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
+ *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *              "openapi_context"={
+ *                      "summary"="Get all mobile's brand",
+ *                      "description"="Get all mobile's brand available",
+ *               },
+ *          },
  *          "post"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
  *         }
  *     },
  *     itemOperations={
- *         "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')"},
+ *         "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *              "openapi_context"={
+ *                      "summary"="Get one mobile's brand",
+ *                      "description"="Get one mobile's brand",
+ *               },
+ *         },
  *         "put"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
- *         },
- *         "patch"={
- *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
  *         },
  *         "delete"={
  *              "security"="is_granted('ROLE_SUPERADMIN')",
- *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur"
+ *              "security_message"="Attention, cette action nécéssite une élévation des droits utilisateur",
+ *              "openapi_context"={"summary"="hidden"},
  *         }
  *      },
  * )
