@@ -15,7 +15,7 @@ Le projet BilMo (exposer une api REST) à été réalisé avec :
 La documentation de l'api est accessible via l'url : http(s)://MonUrl/api  
 Cette documentation comprend l'ensemble des endpoints de l'api accessiblent par un user authentifié ou anonyme
 
-![GitHub img](Public/img/documentation.png)
+![GitHub img](public/img/documentation.png)
 
 ## Installation du projet
 
@@ -62,7 +62,7 @@ Pour authentifier un user il faut :
   "username": "monadressemail.com",
   "password": "monmotdepasse"
 }
-```
+``
 - Le Json Web Token sera alors renvoyé et l'utilisateur pourra se connecter via l'authentification Bearer 
 - Le Token à une durée de validité de 5 jours
 
