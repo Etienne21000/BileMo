@@ -62,7 +62,7 @@ Pour authentifier un user il faut :
   "username": "monadressemail.com",
   "password": "monmotdepasse"
 }
-``
+```
 - Le Json Web Token sera alors renvoyé et l'utilisateur pourra se connecter via l'authentification Bearer 
 - Le Token à une durée de validité de 5 jours
 
