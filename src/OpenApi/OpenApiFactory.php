@@ -22,6 +22,22 @@ class OpenApiFactory implements OpenApiFactoryInterface
     public function __invoke(array $context = []): OpenApi
     {
         $OpenApi = $this->decoration->__invoke($context);
+        $this->setDocumentation($OpenApi);
+        $this->checkBearerAuthJWT($OpenApi);
+        return $OpenApi;
+    }
+
+    private function checkBearerAuthJWT($OpenApi) {
+        $scheme = $OpenApi->getComponents()->getSecuritySchemes();
+        $scheme['bearerAuth'] = new \ArrayObject([
+            'type' => 'http',
+            'scheme' => 'bearer',
+            'bearerFormat' => 'JWT',
+        ]);
+        $OpenApi->withSecurity(['bearerAuth'=>[]]);
+    }
+
+    private function setDocumentation($OpenApi) {
         foreach ($OpenApi->getPaths()->getPaths() as $key => $path) {
             if ($path->getGet() && $path->getGet()->getSummary() === 'hidden') {
                 $OpenApi->getPaths()->addPath($key, $path->withGet(null));
@@ -42,14 +58,5 @@ class OpenApiFactory implements OpenApiFactoryInterface
                 $OpenApi->getPaths()->addPath($key, $path->withDelete(null));
             }
         }
-        $scheme = $OpenApi->getComponents()->getSecuritySchemes();
-        $scheme['bearerAuth'] = new \ArrayObject([
-            'type' => 'http',
-            'scheme' => 'bearer',
-            'bearerFormat' => 'JWT',
-        ]);
-
-        $OpenApi = $OpenApi->withSecurity(['bearerAuth'=>[]]);
-        return $OpenApi;
     }
 }

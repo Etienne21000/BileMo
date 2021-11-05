@@ -93,7 +93,7 @@ class Address
     private $address;
 
     /**
-     * @ORM\Column(type="string", length=11)
+     * @ORM\Column(type="integer", length=11)
      * @Groups({"address:read", "address:write"})
      * @Assert\NotBlank(message="Attention ce champ ne doit pas être vide")
      */

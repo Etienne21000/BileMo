@@ -67,20 +67,11 @@ class AppFixtures extends Fixture
 
             $address_user = (new Address())
                 ->setAddress($faker->address)
-                ->setCp('75002')
-                ->setCity($faker->city)
+                ->setCp("75000")
+                ->setCity("$faker->city")
                 ->setType(1);
             $manager->persist($address_user);
-            $address = [$address_user];
 
-            foreach ($address as $add) {
-                $user_1->addAddress($add);
-                $user_2->addAddress($add);
-                $client_1->addAddress($add);
-                $manager->persist($user_1);
-                $manager->persist($user_2);
-                $manager->persist($client_1);
-            }
         }
 
         $apple = (new Brand())->setBrandName('Apple');

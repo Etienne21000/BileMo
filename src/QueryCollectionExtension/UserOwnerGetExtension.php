@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-
 class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $tokenStorage;
