@@ -21,6 +21,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     attributes={
  *          "pagination_client_items_per_page"=false,
  *     },
+ *     cacheHeaders={
+ *          "max_age"=3600,
+ *          "shared_max_age"=3600,
+ *          "vary"={"Authorization"}
+ *     },
  *     collectionOperations={
  *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
  *              "openapi_context"={

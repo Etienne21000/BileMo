@@ -22,6 +22,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "pagination_client_items_per_page"=true,
  *          "pagination_items_per_page"=15
  *     },
+ *     cacheHeaders={
+ *          "max_age"=3600,
+ *          "shared_max_age"=3600,
+ *          "vary"={"Authorization"}
+ *     },
  *     collectionOperations={
  *          "get"={"security"="is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
  *                  "openapi_context"={

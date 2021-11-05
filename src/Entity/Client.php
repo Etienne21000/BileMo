@@ -16,6 +16,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *     denormalizationContext={"groups"={"client:write"}},
  *     normalizationContext={"groups"={"client:read"}},
+ *     cacheHeaders={
+ *          "max_age"=3600,
+ *          "shared_max_age"=3600,
+ *          "vary"={"Authorization"}
+ *     },
  *     attributes={
  *          "pagination_client_items_per_page"=true,
  *          "pagination_items_per_page"=20

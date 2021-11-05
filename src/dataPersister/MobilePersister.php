@@ -5,11 +5,6 @@ namespace App\dataPersister;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use App\Entity\Mobile;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-//use Symfony\Component\HttpFoundation\Response;
-
 
 class MobilePersister implements DataPersisterInterface
 {
@@ -48,15 +43,16 @@ class MobilePersister implements DataPersisterInterface
         $model = $data->getModel();
         $description = $brandName.' '.$model.' '.$storage.'Go '.$color;
         $title = $description;
+        $paramDescription = '';
 
         switch ($state) {
             case 'A+':
                 $data->setTitle((string)$description.' comme neuf');
-                $data->setDescription($description. ' comme neuf vendu avec ses accessoires d\'origine');
+                    $paramDescription = ' comme neuf vendu avec ses accessoires d\'origine';
                 break;
             case 'A':
                 $data->setTitle((string)$description.' en excellent bon état');
-                $data->setDescription($description. ' en excellent état vendu avec ses accessoires d\'origine');
+                $paramDescription = ' en excellent état vendu avec ses accessoires d\'origine';
                 break;
             case 'B+':
                 $data->setTitle((string)$description.' en très bon état');
@@ -74,6 +70,10 @@ class MobilePersister implements DataPersisterInterface
                 $data->setTitle((string)$description.' état passable');
                 $data->setDescription($description. ' en mauvais état estétique, mais en parfait état de fonctionnement, vendu avec ses accessoires d\'origine');
                 break;
+        }
+
+        if(!$data->getDescription()){
+            $data->setDescription($description.$paramDescription);
         }
 
         $data->setTitle((string)$title);
