@@ -9,10 +9,15 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="Attention, ce client existe déjà."
+ * )
  * @ApiResource(
  *     denormalizationContext={"groups"={"client:write"}},
  *     normalizationContext={"groups"={"client:read"}},
@@ -23,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     attributes={
  *          "pagination_client_items_per_page"=true,
- *          "pagination_items_per_page"=20
+ *          "pagination_items_per_page"=10
  *     },
  *     collectionOperations={
  *          "get"={"security"="is_granted('ROLE_ADMIN')",
@@ -97,7 +102,7 @@ class Client
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Groups({"client:read", "client:write"})
      */
     private $name;
@@ -207,7 +212,6 @@ class Client
     public function removeAddress(Address $address): self
     {
         if ($this->addresses->removeElement($address)) {
-            // set the owning side to null (unless already changed)
             if ($address->getClient() === $this) {
                 $address->setClient(null);
             }

@@ -128,7 +128,6 @@ class Brand
     public function removeMobile(Mobile $mobile): self
     {
         if ($this->mobile->removeElement($mobile)) {
-            // set the owning side to null (unless already changed)
             if ($mobile->getBrand() === $this) {
                 $mobile->setBrand(null);
             }

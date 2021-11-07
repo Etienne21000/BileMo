@@ -31,6 +31,37 @@ class MobilePersister implements DataPersisterInterface
         return $data instanceof Mobile;
     }
 
+    private function dataPersisterPresetSwitch($data, $state, $description){
+        $paramDescription = '';
+        switch ($state) {
+            case 'A+':
+                $data->setTitle((string)$description.' '.$state);
+                $paramDescription = ' comme neuf vendu avec ses accessoires d\'origine';
+                break;
+            case 'A':
+                $data->setTitle((string)$description.' '.$state);
+                $paramDescription = ' en excellent état vendu avec ses accessoires d\'origine';
+                break;
+            case 'B+':
+                $data->setTitle((string)$description.' '.$state);
+                $paramDescription = ' en très bon état vendu avec ses accessoires d\'origine';
+                break;
+            case 'B':
+                $data->setTitle((string)$description.' '.$state);
+                $paramDescription = ' en bon état vendu avec ses accessoires d\'origine';
+                break;
+            case 'C+':
+                $data->setTitle((string)$description.' '.$state);
+                $paramDescription = ' en état moyen avec des rayures visibles à 20cm, vendu avec ses accessoires d\'origine';
+                break;
+            case 'C':
+                $data->setTitle((string)$description.' '.$state);
+                $paramDescription = ' en mauvais état estétique, mais en parfait état de fonctionnement, vendu avec ses accessoires d\'origine';
+                break;
+        }
+        return $paramDescription;
+    }
+
     /**
      * @inheritDoc
      */
@@ -42,41 +73,10 @@ class MobilePersister implements DataPersisterInterface
         $brandName = $data->getBrand()->getBrandName();
         $model = $data->getModel();
         $description = $brandName.' '.$model.' '.$storage.'Go '.$color;
-        $title = $description;
-        $paramDescription = '';
-
-        switch ($state) {
-            case 'A+':
-                $data->setTitle((string)$description.' comme neuf');
-                    $paramDescription = ' comme neuf vendu avec ses accessoires d\'origine';
-                break;
-            case 'A':
-                $data->setTitle((string)$description.' en excellent bon état');
-                $paramDescription = ' en excellent état vendu avec ses accessoires d\'origine';
-                break;
-            case 'B+':
-                $data->setTitle((string)$description.' en très bon état');
-                $data->setDescription($description. ' en très bon état vendu avec ses accessoires d\'origine');
-                break;
-            case 'B':
-                $data->setTitle((string)$description.' en bon état');
-                $data->setDescription($description. ' en bon état vendu avec ses accessoires d\'origine');
-                break;
-            case 'C+':
-                $data->setTitle((string)$description.' état moyen');
-                $data->setDescription($description. ' en état moyen avec des rayures visibles à 20cm, vendu avec ses accessoires d\'origine');
-                break;
-            case 'C':
-                $data->setTitle((string)$description.' état passable');
-                $data->setDescription($description. ' en mauvais état estétique, mais en parfait état de fonctionnement, vendu avec ses accessoires d\'origine');
-                break;
-        }
-
+        $paramDescription = $this->dataPersisterPresetSwitch($data, $state, $description);
         if(!$data->getDescription()){
             $data->setDescription($description.$paramDescription);
         }
-
-        $data->setTitle((string)$title);
         $data->setCreatedAt(new \DateTimeImmutable());
         $this->em->persist($data);
         $this->em->flush();

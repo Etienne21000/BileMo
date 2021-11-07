@@ -50,7 +50,7 @@ class ExceptionEventListener implements EventSubscriberInterface
             );
         } elseif($exception_response instanceof NotFoundHttpException) {
             $response = new JsonResponse(
-                'La page demandée n\'éxiste pas',
+                'Le endpoint demandé n\'éxiste pas',
                 '404'
             );
         } else {

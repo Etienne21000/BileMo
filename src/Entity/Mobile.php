@@ -7,12 +7,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\MobileRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
  * @ORM\Entity(repositoryClass=MobileRepository::class)
+ * @UniqueEntity(
+ *     fields={"IMEI"},
+ *     message="Attention, ce mobile existe déjà."
+ * )
  * @ApiResource(
  *     denormalizationContext={
  *     "groups"={"mobile:write"},
@@ -88,7 +93,7 @@ class Mobile
     private $title;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", unique=true)
      * @Groups({"mobile:read", "mobile:write"})
      * @Assert\NotBlank(message="Attention l'IMEI est obligatoire")
      * @Assert\Type(type="integer", message="Attention l'IMEI doit être un nombre")

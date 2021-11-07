@@ -23,7 +23,7 @@ class SecurityController extends AbstractController
 
             if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
                 return $this->json([
-                    'error' => 'Attention une erreur s\'est produite'
+                    'error' => 'Attention, vous devez être conneté'
                 ], 400);
             }
 
