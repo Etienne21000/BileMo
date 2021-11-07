@@ -44,6 +44,50 @@ class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryI
         }
     }
 
+    private function checkUserOwnerDatas($matches, $queryBuilder, $rootAlias) {
+        $userId = $this->getTokenAuthentication();
+        if($matches){
+            if($userId == $matches[0] && $this->currentUser->getRoles() == ['ROLE_ADMIN']) {
+                $queryBuilder->andWhere(sprintf('%s.id = :current_user', $rootAlias));
+                $queryBuilder->setParameter('current_user', $userId);
+            } elseif($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
+                return;
+            } else { throw new BadRequestException('Attention vous avez uniquement accès aux données user vous concernant ');}
+        } else {
+            if($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']){
+                return;
+            } else { throw new BadRequestException('Attention, vous n\'avez pas accès à ces ressources');}
+        }
+    }
+
+    Private function checkUserOwnerClientsDatas($matches, $queryBuilder, $rootAlias, $method) {
+        $userId = $this->getTokenAuthentication();
+        if($matches){
+            $queryBuilder->andWhere(sprintf('%s.id = :client', $rootAlias));
+            $queryBuilder->setParameter('client', $matches);
+            $client = $queryBuilder->getQuery()->getResult();
+            if ($client) {
+                if ($userId && $this->currentUser->getRoles() == ['ROLE_ADMIN'] && ($method === 'GET' || $method === 'DELETE' || $method === 'PUT')) {
+                    $queryBuilder->andWhere(sprintf('%s.user = :current_user', $rootAlias));
+                    $queryBuilder->setParameter('current_user', $userId);
+                    $resp = $queryBuilder->getQuery()->getResult();
+                    if (!$resp) {
+                        throw new BadRequestException('Attention, vous n\'avez accès qu\'à votre liste de clients ');
+                    } else { return;}
+                } elseif ($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
+                    return;
+                } else { throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');}
+            } elseif (!$client) { throw new BadRequestException('Attention, ce client n\'existe pas');}
+        } else {
+            if($userId && $this->currentUser->getRoles() == ['ROLE_ADMIN']) {
+                $queryBuilder->andWhere(sprintf('%s.user = :current_user', $rootAlias));
+                $queryBuilder->setParameter('current_user', $userId);
+            } elseif($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
+                return;
+            } else {throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');}
+        }
+    }
+
     /**
      * @param $queryBuilder
      * @param $resourceClass
@@ -55,22 +99,11 @@ class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryI
         $method = $req->getMethod();
         switch ($resourceClass){
             case User::class:
-                $userId = $this->getTokenAuthentication();
-                if($matches){
-                    if($userId == $matches[0] && $this->currentUser->getRoles() == ['ROLE_ADMIN']) {
-                        $queryBuilder->andWhere(sprintf('%s.id = :current_user', $rootAlias));
-                        $queryBuilder->setParameter('current_user', $userId);
-                    } elseif($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
-                        return;
-                    } else { throw new BadRequestException('Attention vous avez uniquement accès aux données user vous concernant ');}
-                } else {
-                    if($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']){
-                        return;
-                    } else { throw new BadRequestException('Attention, vous n\'avez pas accès à ces ressources');}
-                }
+                $this->checkUserOwnerDatas($matches, $queryBuilder, $rootAlias);
                 break;
             case Client::class:
-                $userId = $this->getTokenAuthentication();
+                $this->checkUserOwnerClientsDatas($matches, $queryBuilder, $rootAlias, $method);
+                /*$userId = $this->getTokenAuthentication();
                 if($matches){
                     $queryBuilder->andWhere(sprintf('%s.id = :client', $rootAlias));
                     $queryBuilder->setParameter('client', $matches);
@@ -94,7 +127,7 @@ class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryI
                     } elseif($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
                         return;
                     } else {throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');}
-                }
+                }*/
                 break;
             default:
                 return;

@@ -35,27 +35,21 @@ class MobilePersister implements DataPersisterInterface
         $paramDescription = '';
         switch ($state) {
             case 'A+':
-                $data->setTitle((string)$description.' '.$state);
                 $paramDescription = ' comme neuf vendu avec ses accessoires d\'origine';
                 break;
             case 'A':
-                $data->setTitle((string)$description.' '.$state);
                 $paramDescription = ' en excellent état vendu avec ses accessoires d\'origine';
                 break;
             case 'B+':
-                $data->setTitle((string)$description.' '.$state);
                 $paramDescription = ' en très bon état vendu avec ses accessoires d\'origine';
                 break;
             case 'B':
-                $data->setTitle((string)$description.' '.$state);
                 $paramDescription = ' en bon état vendu avec ses accessoires d\'origine';
                 break;
             case 'C+':
-                $data->setTitle((string)$description.' '.$state);
                 $paramDescription = ' en état moyen avec des rayures visibles à 20cm, vendu avec ses accessoires d\'origine';
                 break;
             case 'C':
-                $data->setTitle((string)$description.' '.$state);
                 $paramDescription = ' en mauvais état estétique, mais en parfait état de fonctionnement, vendu avec ses accessoires d\'origine';
                 break;
         }
@@ -77,6 +71,7 @@ class MobilePersister implements DataPersisterInterface
         if(!$data->getDescription()){
             $data->setDescription($description.$paramDescription);
         }
+        $data->setTitle((string)$description.' '.$state);
         $data->setCreatedAt(new \DateTimeImmutable());
         $this->em->persist($data);
         $this->em->flush();
