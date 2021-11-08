@@ -35,7 +35,7 @@ class AppFixtures extends Fixture
         $manager->persist($user_1);
         $user_1->setPassword($this->passwordHasher->hashPassword(
             $user_1,
-            'Equinox75!'
+            'OpenClassrooms21!'
         ));
 
         $user_2 = (new User())
@@ -47,7 +47,7 @@ class AppFixtures extends Fixture
         $manager->persist($user_2);
         $user_2->setPassword($this->passwordHasher->hashPassword(
             $user_2,
-            'Equinox75!'
+            'OpenClassrooms21!'
         ));
 
         for ($i = 0; $i < 60; $i++) {

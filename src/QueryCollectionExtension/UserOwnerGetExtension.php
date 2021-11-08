@@ -103,31 +103,6 @@ class UserOwnerGetExtension implements QueryCollectionExtensionInterface, QueryI
                 break;
             case Client::class:
                 $this->checkUserOwnerClientsDatas($matches, $queryBuilder, $rootAlias, $method);
-                /*$userId = $this->getTokenAuthentication();
-                if($matches){
-                    $queryBuilder->andWhere(sprintf('%s.id = :client', $rootAlias));
-                    $queryBuilder->setParameter('client', $matches);
-                    $client = $queryBuilder->getQuery()->getResult();
-                    if ($client) {
-                        if ($userId && $this->currentUser->getRoles() == ['ROLE_ADMIN'] && ($method === 'GET' || $method === 'DELETE' || $method === 'PUT')) {
-                            $queryBuilder->andWhere(sprintf('%s.user = :current_user', $rootAlias));
-                            $queryBuilder->setParameter('current_user', $userId);
-                            $resp = $queryBuilder->getQuery()->getResult();
-                            if (!$resp) {
-                                throw new BadRequestException('Attention, vous n\'avez accès qu\'à votre liste de clients ');
-                            } else { return;}
-                        } elseif ($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
-                            return;
-                        } else { throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');}
-                    } elseif (!$client) { throw new BadRequestException('Attention, ce client n\'existe pas');}
-                } else {
-                    if($userId && $this->currentUser->getRoles() == ['ROLE_ADMIN']) {
-                        $queryBuilder->andWhere(sprintf('%s.user = :current_user', $rootAlias));
-                        $queryBuilder->setParameter('current_user', $userId);
-                    } elseif($this->currentUser->getRoles() == ['ROLE_SUPERADMIN']) {
-                        return;
-                    } else {throw new BadRequestException('Attention vous n\'avez pas accès à cette ressource !!!');}
-                }*/
                 break;
             default:
                 return;
