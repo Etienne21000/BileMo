@@ -1,28 +1,12 @@
 <?php
-/**
- * BileMo
- * MobileExceptionListener.php
- *
- * PHP Version 5
- *
- * @category Production
- * @package  Default
- * @date     08/10/2021 15:47
- * @license  http://BileMo.com/license.txt BileMo License
- * @version  GIT: 1.0
- * @link     http://BileMo.com/
- */
 
 namespace App\EventListener;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Client;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Entity\Mobile;
-
 
 class MobileExceptionListener implements EventSubscriberInterface
 {

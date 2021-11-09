@@ -17,7 +17,7 @@ class MainController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function index(): Response {
+    /*public function index(): Response {
 
         $colors = [
             'noir',
@@ -44,6 +44,6 @@ class MainController extends AbstractController
             'color' => $resp,
             'token' => $resp_time,
         ]);
-    }
+    }*/
 
 }
